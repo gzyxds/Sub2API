@@ -1,0 +1,6 @@
+.env
+postgres_data/
+redis_data/
+data/logs/
+data/.installed
+data/config.yaml
