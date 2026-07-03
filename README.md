@@ -63,3 +63,28 @@ docker-compose logs sub2api
 1. **配置域名访问**：在宝塔面板 Nginx 中添加反向代理到 `localhost:8080`，并开启 `underscores_in_headers on`
 2. **启用 Simple Mode**：修改 `.env` 设置 `RUN_MODE=simple` + `SIMPLE_MODE_CONFIRM=true` 隐藏 SaaS 计费功能
 3. **修改管理员邮箱**：编辑 `.env` 中的 `ADMIN_EMAIL` 后重启容器
+
+### 八、更新升级
+
+#### 仅更新应用镜像
+```bash
+cd /www/wwwroot/Sub2API
+docker-compose down
+docker-compose pull sub2api
+docker-compose up -d
+```
+
+#### 同步部署文件（可选）
+如果上游 `docker-compose.yml` 或 `.env.example` 有变动：
+```bash
+curl -sSL https://raw.githubusercontent.com/Wei-Shaw/sub2api/main/deploy/docker-compose.local.yml -o docker-compose.yml
+curl -sSL https://raw.githubusercontent.com/Wei-Shaw/sub2api/main/deploy/.env.example -o .env.example
+docker-compose up -d
+```
+> `.env.example` 仅作参考，不会覆盖你的 `.env` 配置。
+
+| 要点 | 说明 |
+|------|------|
+| 镜像标签 | `weishaw/sub2api:latest`，`pull` 直接获取最新版 |
+| 数据安全 | `data/`、`postgres_data/`、`redis_data/` 挂载在本地，重建不会丢失 |
+| 密钥不变 | `JWT_SECRET`、`TOTP_ENCRYPTION_KEY` 已固定在 `.env` 中，用户会话不会失效 |
